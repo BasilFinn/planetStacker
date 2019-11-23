@@ -21,7 +21,7 @@ Widget::~Widget()
 
 void Widget::getDataPath()
 {
-    cout << "idiot" << endl;
-    QString path = QFileDialog::getExistingDirectory();
+    QString path = QFileDialog::getOpenFileName(this, tr("Select video"),/*tr("."),*/tr("Movie Files (*.mp4 *.avi)"));
     cout << path.toStdString() << endl;
 }
+
