@@ -26,6 +26,7 @@ add_executable(${PROJECT_NAME}
     src/main.cpp
     src/app/planetprocessing.cpp
     src/app/planetprocessing.h
+    src/app/iprocessing.h
     src/app/dataqueue.h
     src/ui/widget.cpp
     src/ui/widget.h
@@ -34,11 +35,9 @@ add_executable(${PROJECT_NAME}
 
 # Link used libraries
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets ${OpenCV_LIBS})
-#target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
 
 # set build type to Debug/Release
 set(CMAKE_BUILD_TYPE "Debug")
-
 
 #Set target properties (includes without specific path)
 target_include_directories(${PROJECT_NAME} PRIVATE

@@ -3,6 +3,7 @@
 
 #include <opencv2/opencv.hpp>
 #include "dataqueue.h"
+#include "iprocessing.h"
 
 using namespace std;
 using namespace cv;
@@ -10,7 +11,8 @@ using namespace cv;
 class PlanetProcessing
 {
 public:
-    PlanetProcessing();
+    PlanetProcessing(Iprocessing* host);
+    Iprocessing* m_host;
     DataQueue<cv::Mat> data;
 
     void loadData();

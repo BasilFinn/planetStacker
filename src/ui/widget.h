@@ -2,18 +2,21 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include "iprocessing.h"
+
 
 namespace Ui {
 class Widget;
 }
 
-class Widget : public QWidget
+class Widget : public QWidget, public Iprocessing
 {
     Q_OBJECT
 
 public:
     explicit Widget(QWidget *parent = nullptr);
     ~Widget();
+    bool dataReady();
 
 public slots:
     void getDataPath();

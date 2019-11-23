@@ -3,6 +3,9 @@
 #include <QFileDialog>
 
 #include <iostream>
+#include "iprocessing.h"
+#include "planetprocessing.h"
+
 using namespace std;
 
 Widget::Widget(QWidget *parent) :
@@ -21,7 +24,12 @@ Widget::~Widget()
 
 void Widget::getDataPath()
 {
-    QString path = QFileDialog::getOpenFileName(this, tr("Select video"),/*tr("."),*/tr("Movie Files (*.mp4 *.avi)"));
+    QString path = QFileDialog::getOpenFileName(this, tr("Select video"),tr("."),tr("Movie Files (*.mp4 *.avi)"));
     cout << path.toStdString() << endl;
 }
 
+bool Widget::dataReady()
+{
+    // Dummy function
+    return true;
+}

@@ -1,6 +1,6 @@
 #include "planetprocessing.h"
 
-PlanetProcessing::PlanetProcessing()
+PlanetProcessing::PlanetProcessing(Iprocessing* host): m_host(host)
 {
 
 }
