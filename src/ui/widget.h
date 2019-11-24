@@ -2,7 +2,8 @@
 #define WIDGET_H
 
 #include <QWidget>
-#include "iprocessing.h"
+//#include "iprocessing.h"
+#include "planetprocessing.h"
 
 
 namespace Ui {
@@ -16,13 +17,14 @@ class Widget : public QWidget, public Iprocessing
 public:
     explicit Widget(QWidget *parent = nullptr);
     ~Widget();
-    bool dataReady();
+    virtual bool dataReady() override;
 
 public slots:
     void getDataPath();
 
 private:
     Ui::Widget *ui;
+    PlanetProcessing m_pp;
 };
 
 #endif // WIDGET_H

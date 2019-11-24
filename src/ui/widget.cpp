@@ -10,11 +10,15 @@ using namespace std;
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::Widget)
+    ui(new Ui::Widget),
+    m_pp(this)
 {
+    QString path = QFileDialog::getOpenFileName(this, tr("Select video"),tr("."),tr("Movie Files (*.mp4 *.avi)"));
+    cout << path.toStdString() << endl;
+    m_pp.savePath(path.toStdString());
+
     ui->setupUi(this);
     connect(ui->pushButton_loadData, SIGNAL (clicked()),this, SLOT(getDataPath()));
-
 }
 
 Widget::~Widget()
@@ -24,8 +28,10 @@ Widget::~Widget()
 
 void Widget::getDataPath()
 {
-    QString path = QFileDialog::getOpenFileName(this, tr("Select video"),tr("."),tr("Movie Files (*.mp4 *.avi)"));
-    cout << path.toStdString() << endl;
+//    QString path = QFileDialog::getOpenFileName(this, tr("Select video"),tr("."),tr("Movie Files (*.mp4 *.avi)"));
+//    cout << path.toStdString() << endl;
+//    m_pp.savePath(path.toStdString());
+    cout << "Path: " << m_pp.getPath() << endl;
 }
 
 bool Widget::dataReady()
