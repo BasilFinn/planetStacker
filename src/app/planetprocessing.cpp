@@ -8,12 +8,32 @@ PlanetProcessing::PlanetProcessing(Iprocessing* host)
 
 void PlanetProcessing::loadData()
 {
-    cout << "Load data" << endl;
+    cout << "Processing: load data" << endl;
+    Mat tmpFrame;
 
-//    m_data.add();
+
+}
+
+void PlanetProcessing::loadRaw()
+{
+    // Loads raw data to DataQueue
+    Mat tmpFrame;
+    VideoCapture cap(m_dataPath);
+    if(!cap.isOpened())
+        cout << "Error opening video" << endl;
+
+    while(1)
+    {
+        cap >> tmpFrame;
+        if(tmpFrame.empty())
+            break;
+        m_data_raw.push_back(tmpFrame);
+    }
 }
 
 void PlanetProcessing::savePath(string path)
 {
+    cout << "Processing: save path" << endl;
+
     m_dataPath = path;
 }

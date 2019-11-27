@@ -13,8 +13,10 @@ class PlanetProcessing
 {
 public:
     PlanetProcessing(Iprocessing* host);
-    DataQueue<cv::Mat> data;
+    vector<cv::Mat> m_data_raw;
+    DataQueue<cv::Mat> m_data_crop;
     void loadData();
+    void loadRaw();
     void savePath(string path);
     string getPath(){return m_dataPath;}
 

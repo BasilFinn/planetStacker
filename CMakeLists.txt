@@ -8,6 +8,7 @@ cmake_minimum_required(VERSION 3.0)
 # Declare dependencies
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Test Concurrent OpenGL)
 find_package(OpenCV REQUIRED)
+find_package(Threads)
 
 set(OpenCV_DIR "C:/Users/basil/lib/opencv-build")
 find_package(OpenCV REQUIRED COMPONENTS core imgproc highgui)
@@ -34,7 +35,9 @@ add_executable(${PROJECT_NAME}
 )
 
 # Link used libraries
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets ${OpenCV_LIBS})
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets
+                      ${OpenCV_LIBS}
+                      ${CMAKE_THREAD_LIBS_INIT})
 
 # set build type to Debug/Release
 set(CMAKE_BUILD_TYPE "Debug")
