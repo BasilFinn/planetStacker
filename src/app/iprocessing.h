@@ -1,5 +1,5 @@
 #ifndef IPROCESSING_H
-#define IPROCESSING_H
+#define  IPROCESSING_H
 
 class Iprocessing
 {
