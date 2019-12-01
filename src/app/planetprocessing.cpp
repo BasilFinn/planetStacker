@@ -19,6 +19,7 @@ bool PlanetProcessing::startProcessing(){
 
 bool PlanetProcessing::executeProcessing()
 {
+//    /WindowsData/Users/basil/Desktop/SharpCap Captures/2019-09-30/Saturn/
     // Check and update asyncs
     cv::Mat tmpMat;
     std::future_status status;
@@ -48,14 +49,13 @@ bool PlanetProcessing::executeProcessing()
                 status = asyncProcess[i].wait_for(std::chrono::milliseconds(100));
                 switch(status){
                 case std::future_status::ready:
-                    cout << "Get: " << m_frameCnt+1 << "\tthread:" << i << endl;;
                     tmpMat = asyncProcess[i].get();
                     m_data_crop.push_back(tmpMat.clone());
                     if(m_frameCnt<m_noFrames)
                     {
-                        cout << "Load new" << endl;
-                        asyncProcess[i] = std::async(std::launch::async, [this](){return processThread();});
                         m_frameCnt++;
+                        cout << "Thread["<<i<<"]: "<<m_frameCnt << endl;
+                        asyncProcess[i] = std::async(std::launch::async, [this](){return processThread();});
                     }
                     break;
 
@@ -85,23 +85,21 @@ bool PlanetProcessing::executeProcessing()
                 {
                     cout << "All threads non Valid - all frames loaded" << endl;
                     running = false;
+                    break;
                     cout << "Load status: " << asyncLoad.get() << endl;
                 }
             }
         }
     }
 
-
     cout << "No. loaded frames: " << m_data_crop.size() <<  endl;
-    for(int i=0; i<m_data_crop.size(); i++)
-    {
-        cout << "Framecnt: " << i << endl;
-        tmpMat = m_data_crop[i];
-        cv::imshow(std::to_string(i), tmpMat);
-        waitKey(1);
-    }
+
+    imshow("First frame", m_data_crop[0]);
+    imshow("Last frame", m_data_crop.back());
+
     return 1;
 }
+
 
 Mat PlanetProcessing::processThread()
 {
