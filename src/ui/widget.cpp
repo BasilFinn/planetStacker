@@ -28,7 +28,8 @@ void Widget::getDataPath()
     cout << path.toStdString() << endl;
     m_pp.savePath(path.toStdString());
     cout << "Path: " << m_pp.getPath() << endl;
-    m_pp.executeProcessing();
+//    m_pp.executeProcessing();
+    m_pp.startProcessing();
 }
 
 bool Widget::dataReady()

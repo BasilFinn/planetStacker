@@ -17,7 +17,7 @@ class Widget : public QWidget, public Iprocessing
 public:
     explicit Widget(QWidget *parent = nullptr);
     ~Widget();
-    virtual bool dataReady() override;
+    bool dataReady() override;
 
 public slots:
     void getDataPath();

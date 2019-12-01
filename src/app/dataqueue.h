@@ -42,11 +42,19 @@ public:
 
     bool isFull()
     {
+        //unique_lock<mutex> lock(m_mu);
         return (m_q.size() >= m_maxEl);
     }
 
     bool isEmpty()
     {
+        //unique_lock<mutex> lock(m_mu);
+        return m_q.empty();
+    }
+
+    bool extIsEmpty()
+    {
+        unique_lock<mutex> lock(m_mu);
         return m_q.empty();
     }
 
