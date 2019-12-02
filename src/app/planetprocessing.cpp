@@ -1,4 +1,4 @@
-#include "planetprocessing.h"
+    #include "planetprocessing.h"
 #include "planetprocessing.h"
 
 PlanetProcessing::PlanetProcessing(Iprocessing* host)
@@ -19,6 +19,9 @@ bool PlanetProcessing::startProcessing(){
 
 bool PlanetProcessing::executeProcessing()
 {
+    //make ref frame
+    makeRefFrame();
+
 //    /WindowsData/Users/basil/Desktop/SharpCap Captures/2019-09-30/Saturn/
     // Check and update asyncs
     cv::Mat tmpMat;
@@ -50,7 +53,8 @@ bool PlanetProcessing::executeProcessing()
                 switch(status){
                 case std::future_status::ready:
                     tmpMat = asyncProcess[i].get();
-                    m_data_crop.push_back(tmpMat.clone());
+                    if(!tmpMat.empty())
+                        m_data_crop.push_back(tmpMat.clone());
                     if(m_frameCnt<m_noFrames)
                     {
                         m_frameCnt++;
@@ -97,17 +101,67 @@ bool PlanetProcessing::executeProcessing()
     imshow("First frame", m_data_crop[0]);
     imshow("Last frame", m_data_crop.back());
 
+    stackFrames();
+    sharpenFrame();
+
     return 1;
 }
 
 
-Mat PlanetProcessing::processThread()
-{
-    cv::Mat tmpMat = this->m_data_raw.get();
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));    // Do processing here
-    return tmpMat;
 
+
+
+
+cv::Mat PlanetProcessing::processThread()
+{
+    cv::Mat emptyMat;
+    cv::Mat frameOrg = this->m_data_raw.get();
+    cv::Mat frameGray;
+    cv::cvtColor(frameOrg, frameGray, CV_BGR2GRAY);
+    cv::Point minLoc, maxLoc;
+    double minVal, maxVal;
+    const int halfCol = m_width/2;
+    const int halfRow = m_height/2;
+
+    cv::minMaxLoc(frameGray, &minVal, &maxVal, &minLoc, &maxLoc);
+
+    //CROP FRAME
+    cv::Rect roiOut;
+    if(  maxLoc.x+halfCol<frameGray.cols  &&  maxLoc.x-halfCol>0  &&  maxLoc.y+halfRow<frameGray.rows  && maxLoc.y-halfRow>0){
+        cv::Rect roi(maxLoc.x-halfCol, maxLoc.y-halfRow, 2*halfCol, 2*halfRow);
+        roiOut = roi;
+        frameGray = frameGray(roi);
+    }
+    else{
+        cout << "Window to close to border!" << endl;
+        return emptyMat;
+    }
+
+    //REGISTER FRAME
+    const int warpMode = MOTION_TRANSLATION;
+    Mat warpMat = Mat::eye(2,3,CV_32F);
+    int nIterations = 8000;
+    double termination_eps = 1e-10; //1e-10;
+    TermCriteria criteria (TermCriteria::COUNT+TermCriteria::EPS, nIterations, termination_eps);
+
+    warpMat = Mat::eye(2,3,CV_32F);
+    double corr = findTransformECC(   m_refFrame,
+                                      frameGray,
+                                      warpMat,
+                                      warpMode,
+                                      criteria);
+    warpAffine(frameGray, frameGray, warpMat, frameGray.size(), INTER_LINEAR + WARP_INVERSE_MAP);
+//    return frameGray;
+
+    cv::Mat out;
+    cv::warpAffine(frameOrg(roiOut), out, warpMat, frameOrg(roiOut).size(), INTER_LINEAR + WARP_INVERSE_MAP);
+    return out;
 }
+
+
+
+
+
 
 bool PlanetProcessing::loadRaw(void)
 {
@@ -128,6 +182,7 @@ bool PlanetProcessing::loadRaw(void)
             break;
         m_data_raw.add(tmpFrame.clone());
     }
+    cap.release();
     return true;
 }
 
@@ -135,4 +190,56 @@ void PlanetProcessing::savePath(string path)
 {
     cout << "Processing: save path" << endl;
     m_dataPath = path;
+}
+
+void PlanetProcessing::makeRefFrame()
+{
+    Mat frameOrg;
+    VideoCapture cap(m_dataPath);
+    if(!cap.isOpened()){
+        cout << "Error opening video" << endl;
+        exit;
+    }
+    int nFrames = cap.get(CV_CAP_PROP_FRAME_COUNT);
+    cap.set(CV_CAP_PROP_POS_FRAMES, int(nFrames/2));
+    cap >> frameOrg;
+
+    cv::Mat frameGray, emptyMat;
+    cv::cvtColor(frameOrg, frameGray, CV_BGR2GRAY);
+    double minVal, maxVal;
+    cv::Point minLoc,maxLoc;
+    const int halfCol = m_width/2;
+    const int halfRow = m_height/2;
+    cv::minMaxLoc(frameGray, &minVal, &maxVal, &minLoc, &maxLoc);
+    if(  maxLoc.x+halfCol<frameGray.cols  &&  maxLoc.x-halfCol>0  &&  maxLoc.y+halfRow<frameGray.rows  && maxLoc.y-halfRow>0){
+        cv::Rect roi(maxLoc.x-halfCol, maxLoc.y-halfRow, 2*halfCol, 2*halfRow);
+        frameGray = frameGray(roi);
+    }
+    else{
+        cout << "Reference frame to close to border!" << endl;
+        m_refFrame = emptyMat;
+    }
+
+    m_refFrame = frameGray;
+}
+
+void PlanetProcessing::stackFrames()
+{
+//    Mat matSum = Mat::zeros(m_data_crop[0].size(), CV_32F);
+    Mat matSum = Mat::zeros(m_data_crop[0].size(), 22);// m_data_crop[0].type());
+
+    for(auto el:m_data_crop){
+        cv::accumulate(el, matSum);
+    }
+    m_stackedFrame = matSum / m_data_crop.size();
+    cv::imshow("mean img", m_stackedFrame/255);
+}
+
+void PlanetProcessing::sharpenFrame()
+{
+    cv::Mat imgSharp;
+    cv::GaussianBlur(m_stackedFrame, imgSharp, cv::Size(0, 0), 9);      // 3
+    cv::addWeighted(m_stackedFrame, 2, imgSharp, -1, 0, imgSharp);  // 1.5 -0.5 0
+
+    cv::imshow("sharp img", imgSharp/255);
 }

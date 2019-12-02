@@ -52,10 +52,4 @@ public:
         return m_q.empty();
     }
 
-    bool extIsEmpty()
-    {
-        unique_lock<mutex> lock(m_mu);
-        return m_q.empty();
-    }
-
 };
