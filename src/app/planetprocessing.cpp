@@ -225,11 +225,14 @@ void PlanetProcessing::makeRefFrame()
 
 void PlanetProcessing::stackFrames()
 {
+    int factor = 4;
 //    Mat matSum = Mat::zeros(m_data_crop[0].size(), CV_32F);
-    Mat matSum = Mat::zeros(m_data_crop[0].size(), 22);// m_data_crop[0].type());
+    Mat matSum = Mat::zeros(cv::Size(m_data_crop[0].cols*factor, m_data_crop[0].rows*factor), 22);// m_data_crop[0].type());
 
     for(auto el:m_data_crop){
-        cv::accumulate(el, matSum);
+        cv::Mat rsMat = el;
+        cv::resize(rsMat, rsMat, cv::Size(rsMat.cols*factor, rsMat.rows*factor));
+        cv::accumulate(rsMat, matSum);
     }
     m_stackedFrame = matSum / m_data_crop.size();
     cv::imshow("mean img", m_stackedFrame/255);
