@@ -21,7 +21,6 @@ bool PlanetProcessing::executeProcessing()
     //make ref frame
     makeRefFrame();
 
-//    /WindowsData/Users/basil/Desktop/SharpCap Captures/2019-09-30/Saturn/
     // Check and update asyncs
     cv::Mat tmpMat;
     std::future_status status;
@@ -48,7 +47,7 @@ bool PlanetProcessing::executeProcessing()
         {
             if(asyncProcess[i].valid())
             {
-                status = asyncProcess[i].wait_for(std::chrono::milliseconds(100));
+                status = asyncProcess[i].wait_for(std::chrono::milliseconds(0));
                 switch(status){
                 case std::future_status::ready:
                     tmpMat = asyncProcess[i].get();
@@ -63,11 +62,11 @@ bool PlanetProcessing::executeProcessing()
                     break;
 
                 case std::future_status::deferred:
-                    cout << "deferred: " << i <<  endl;
+                    //cout << "deferred: " << i <<  endl;
                     break;
 
                 case std::future_status::timeout:
-                    cout << "tiemout: " << i << endl;
+                    //cout << "tiemout: " << i << endl;
                     break;
 
                 default:
@@ -75,13 +74,11 @@ bool PlanetProcessing::executeProcessing()
                 }
             }
             else{
-                cout << "not Valid" << endl;
                 rcnt = 0;
                 for(auto& ap:asyncProcess)
                 {
                     if(!ap.valid()){
                         rcnt++;
-                        cout << "Rcnt: " << rcnt << endl;
                     }
                 }
                 if(rcnt==m_nThreads && asyncLoad.wait_for(std::chrono::seconds(0))==std::future_status::ready)
@@ -97,20 +94,12 @@ bool PlanetProcessing::executeProcessing()
 
     cout << "No. loaded frames: " << m_data_crop.size() <<  endl;
 
-    imshow("First frame", m_data_crop[0]);
-    imshow("Last frame", m_data_crop.back());
+//    imshow("First frame", m_data_crop[0]);
+//    imshow("Last frame", m_data_crop.back());
 
     stackFrames();
-    sharpenFrame();
-
-    m_outMat = m_stackedFrame;
-    m_host->dataReady();
-
     return 1;
 }
-
-
-
 
 
 
@@ -239,7 +228,10 @@ void PlanetProcessing::stackFrames()
     }
     m_stackedFrame = matSum / m_data_crop.size();
     rotate(m_stackedFrame, m_stackedFrame, 1);
-    cv::imshow("mean img", m_stackedFrame/255);
+    //cv::imshow("mean img", m_stackedFrame/255);
+
+    m_outMat = m_stackedFrame.clone();
+    m_host->dataReady();
 }
 
 void PlanetProcessing::sharpenFrame()
@@ -248,5 +240,9 @@ void PlanetProcessing::sharpenFrame()
     cv::GaussianBlur(m_stackedFrame, imgSharp, cv::Size(0, 0), 9);      // 3
     cv::addWeighted(m_stackedFrame, 3, imgSharp, -2, 0, imgSharp);  // 1.5 -0.5 0
 
-    cv::imshow("sharp img", imgSharp/255);
+
+    //cv::imshow("sharp img", imgSharp/255);
+
+    m_outMat = imgSharp.clone();
+    m_host->dataReady();
 }

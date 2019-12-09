@@ -32,7 +32,6 @@ public:
     string getPath(){return m_dataPath;}
     DataQueue<cv::Mat> m_data_raw;
     vector<cv::Mat> m_data_crop;
-    vector<double> m_data_correlation;
     int m_rangeRows, m_rangeCols;
     int m_nThreads = 6;
     int m_noFrames;

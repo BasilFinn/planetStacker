@@ -23,6 +23,7 @@ public:
 
 public slots:
     void getDataPath();
+    void sharpen();
 
 private:
     Ui::Widget *ui;
