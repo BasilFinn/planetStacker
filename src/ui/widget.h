@@ -18,6 +18,8 @@ public:
     explicit Widget(QWidget *parent = nullptr);
     ~Widget();
     bool dataReady() override;
+    void updateBar() override;
+    void initBar(int maxFrames) override;
 
 public slots:
     void getDataPath();
@@ -25,6 +27,7 @@ public slots:
 private:
     Ui::Widget *ui;
     PlanetProcessing m_pp;
+
 };
 
 #endif // WIDGET_H

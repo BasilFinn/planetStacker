@@ -39,6 +39,8 @@ public:
     int m_frameCnt;
     int m_width = 400;  // Cols
     int m_height = 200; // rows
+    cv::Mat m_outMat;
+    Iprocessing* m_host;
 
     // load ref image in middle (to show fov
     // process async (load img, find max, crop region, register to refFrame, pushback to vector)

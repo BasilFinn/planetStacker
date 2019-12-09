@@ -1,9 +1,8 @@
-    #include "planetprocessing.h"
 #include "planetprocessing.h"
 
-PlanetProcessing::PlanetProcessing(Iprocessing* host)
+PlanetProcessing::PlanetProcessing(Iprocessing* host): m_host(host)
 {
-    host->dataReady();
+    //host->dataReady();
 }
 
 PlanetProcessing::~PlanetProcessing()
@@ -58,7 +57,7 @@ bool PlanetProcessing::executeProcessing()
                     if(m_frameCnt<m_noFrames)
                     {
                         m_frameCnt++;
-                        cout << "Thread["<<i<<"]: "<<m_frameCnt << endl;
+                        m_host->updateBar();
                         asyncProcess[i] = std::async(std::launch::async, [this](){return processThread();});
                     }
                     break;
@@ -103,6 +102,9 @@ bool PlanetProcessing::executeProcessing()
 
     stackFrames();
     sharpenFrame();
+
+    m_outMat = m_stackedFrame;
+    m_host->dataReady();
 
     return 1;
 }
@@ -173,6 +175,7 @@ bool PlanetProcessing::loadRaw(void)
         return false;
     }
     m_noFrames = cap.get(CV_CAP_PROP_FRAME_COUNT);
+    m_host->initBar(m_noFrames);
     cout << "Numbers: " << m_noFrames << endl;
 
     while(1)
@@ -225,7 +228,7 @@ void PlanetProcessing::makeRefFrame()
 
 void PlanetProcessing::stackFrames()
 {
-    int factor = 4;
+    int factor = 2;
 //    Mat matSum = Mat::zeros(m_data_crop[0].size(), CV_32F);
     Mat matSum = Mat::zeros(cv::Size(m_data_crop[0].cols*factor, m_data_crop[0].rows*factor), 22);// m_data_crop[0].type());
 
@@ -235,6 +238,7 @@ void PlanetProcessing::stackFrames()
         cv::accumulate(rsMat, matSum);
     }
     m_stackedFrame = matSum / m_data_crop.size();
+    rotate(m_stackedFrame, m_stackedFrame, 1);
     cv::imshow("mean img", m_stackedFrame/255);
 }
 
@@ -242,7 +246,7 @@ void PlanetProcessing::sharpenFrame()
 {
     cv::Mat imgSharp;
     cv::GaussianBlur(m_stackedFrame, imgSharp, cv::Size(0, 0), 9);      // 3
-    cv::addWeighted(m_stackedFrame, 2, imgSharp, -1, 0, imgSharp);  // 1.5 -0.5 0
+    cv::addWeighted(m_stackedFrame, 3, imgSharp, -2, 0, imgSharp);  // 1.5 -0.5 0
 
     cv::imshow("sharp img", imgSharp/255);
 }

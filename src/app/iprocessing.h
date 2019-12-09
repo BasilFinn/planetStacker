@@ -5,6 +5,9 @@ class Iprocessing
 {
 public:
     virtual bool dataReady() = 0;
+
+    virtual void updateBar() = 0;
+    virtual void initBar(int maxFrames) = 0;
 };
 
 #endif // IPROCESSING_H

@@ -25,15 +25,28 @@ Widget::~Widget()
 void Widget::getDataPath()
 {
     QString path = QFileDialog::getOpenFileName(this, tr("Select video"),tr("."),tr("Movie Files (*.mp4 *.avi)"));
+    // TODO: make exception if no path selected
     cout << path.toStdString() << endl;
     m_pp.savePath(path.toStdString());
     cout << "Path: " << m_pp.getPath() << endl;
-//    m_pp.executeProcessing();
     m_pp.startProcessing();
 }
 
 bool Widget::dataReady()
 {
     // Implement here (call in planetprocessing)
+    cv::Mat img = m_pp.m_outMat.clone();
+    img.convertTo(img, CV_8UC3);
+    ui->label_image->setPixmap(QPixmap::fromImage(QImage(img.data, img.cols, img.rows, img.step, QImage::Format_RGB888).rgbSwapped()));
     return true;
+}
+
+void Widget::updateBar()
+{
+    ui->progressBar->setValue(m_pp.m_frameCnt);
+}
+
+void Widget::initBar(int maxFrames)
+{
+    ui->progressBar->setMaximum(maxFrames);
 }
