@@ -40,6 +40,7 @@ public:
     int m_frameCnt;
     int m_width = 400;  // Cols
     int m_height = 200; // rows
+    double m_corrThres = 0.997;
     cv::Mat m_outMat;
     Iprocessing* m_host;
 
