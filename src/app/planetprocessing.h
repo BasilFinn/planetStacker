@@ -6,7 +6,7 @@
 #include <thread>
 #include <future>
 #include <chrono>
-#include <tuple>
+#include <utility> //make_pair
 #include "dataqueue.h"
 #include "iprocessing.h"
 
@@ -20,7 +20,7 @@ public:
     ~PlanetProcessing();
     bool executeProcessing();
     bool startProcessing();
-    cv::Mat processThread();
+    pair<double, cv::Mat> processThread();
     bool loadRaw(void);
     void savePath(string path);
     void makeRefFrame();
@@ -31,7 +31,8 @@ public:
 
     string getPath(){return m_dataPath;}
     DataQueue<cv::Mat> m_data_raw;
-    vector<cv::Mat> m_data_crop;
+//    vector<cv::Mat> m_data_crop;
+    vector<pair<double, cv::Mat>> m_data_crop;
     vector<double> m_data_correlation;
     int m_rangeRows, m_rangeCols;
     int m_nThreads = 6;

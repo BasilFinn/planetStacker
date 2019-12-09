@@ -23,7 +23,7 @@ bool PlanetProcessing::executeProcessing()
 
 //    /WindowsData/Users/basil/Desktop/SharpCap Captures/2019-09-30/Saturn/
     // Check and update asyncs
-    cv::Mat tmpMat;
+    pair<double, cv::Mat> corrMat;
     std::future_status status;
     bool running = true;
     int rcnt=0;
@@ -51,9 +51,9 @@ bool PlanetProcessing::executeProcessing()
                 status = asyncProcess[i].wait_for(std::chrono::milliseconds(100));
                 switch(status){
                 case std::future_status::ready:
-                    tmpMat = asyncProcess[i].get();
-                    if(!tmpMat.empty())
-                        m_data_crop.push_back(tmpMat.clone());
+                    auto returnV = asyncProcess[i].get();
+                    if(!corrMat.empty())
+                        m_data_crop.push_back(make_pair(returnV.first, returnV.second.clone()));
                     if(m_frameCnt<m_noFrames)
                     {
                         m_frameCnt++;
@@ -97,8 +97,8 @@ bool PlanetProcessing::executeProcessing()
 
     cout << "No. loaded frames: " << m_data_crop.size() <<  endl;
 
-    imshow("First frame", m_data_crop[0]);
-    imshow("Last frame", m_data_crop.back());
+//    imshow("First frame", m_data_crop[0]);
+//    imshow("Last frame", m_data_crop.back());
 
     stackFrames();
     sharpenFrame();
@@ -114,7 +114,7 @@ bool PlanetProcessing::executeProcessing()
 
 
 
-cv::Mat PlanetProcessing::processThread()
+pair<double, Mat> PlanetProcessing::processThread()
 {
     cv::Mat emptyMat;
     cv::Mat frameOrg = this->m_data_raw.get();
@@ -136,7 +136,7 @@ cv::Mat PlanetProcessing::processThread()
     }
     else{
         cout << "Window to close to border!" << endl;
-        return emptyMat;
+        return pair<double, cv::Mat>(0.0, emptyMat);
     }
 
     //REGISTER FRAME
@@ -157,7 +157,8 @@ cv::Mat PlanetProcessing::processThread()
 
     cv::Mat out;
     cv::warpAffine(frameOrg(roiOut), out, warpMat, frameOrg(roiOut).size(), INTER_LINEAR + WARP_INVERSE_MAP);
-    return out;
+
+    return pair<double, cv::Mat>(corr, out);
 }
 
 
@@ -230,7 +231,7 @@ void PlanetProcessing::stackFrames()
 {
     int factor = 2;
 //    Mat matSum = Mat::zeros(m_data_crop[0].size(), CV_32F);
-    Mat matSum = Mat::zeros(cv::Size(m_data_crop[0].cols*factor, m_data_crop[0].rows*factor), 22);// m_data_crop[0].type());
+    Mat matSum = Mat::zeros(cv::Size(m_data_crop[0].second.cols*factor, m_data_crop[0].second.rows*factor), 22);// m_data_crop[0].type());
 
     for(auto el:m_data_crop){
         cv::Mat rsMat = el;
