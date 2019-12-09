@@ -2,7 +2,6 @@
 #define WIDGET_H
 
 #include <QWidget>
-//#include "iprocessing.h"
 #include "planetprocessing.h"
 
 
@@ -16,7 +15,7 @@ class Widget : public QWidget, public Iprocessing
 
 public:
     explicit Widget(QWidget *parent = nullptr);
-    ~Widget();
+    ~Widget() override;
     bool dataReady() override;
     void updateBar() override;
     void initBar(int maxFrames) override;

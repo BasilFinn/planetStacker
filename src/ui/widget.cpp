@@ -3,8 +3,6 @@
 #include <QFileDialog>
 
 #include <iostream>
-//#include "iprocessing.h"
-////#include "planetprocessing.h"
 
 using namespace std;
 
@@ -16,10 +14,9 @@ Widget::Widget(QWidget *parent) :
     ui->setupUi(this);
     connect(ui->pushButton_loadData, SIGNAL (clicked()),this, SLOT(getDataPath()));
     // Sharpening
-    connect(ui->pushButton_sharpen, SIGNAL (clicked()), this, SLOT(sharpen()));
     connect(ui->spinBox_gauss, SIGNAL(valueChanged(int)), this, SLOT(setSharpGauss(int)));
-    connect(ui->doubleSpinBox_weightBlurr,SIGNAL(valueChanged(double)), this, SLOT(setSharpGauss(double)));
-    connect(ui->doubleSpinBox_weightOrg,SIGNAL(valueChanged(double)), this, SLOT(setSharpGauss(double)));
+    connect(ui->doubleSpinBox_weightBlurr,SIGNAL(valueChanged(double)), this, SLOT(setSharpWeightBlurr(double)));
+    connect(ui->doubleSpinBox_weightOrg,SIGNAL(valueChanged(double)), this, SLOT(setSharpWeightOrg(double)));
 
 }
 
@@ -34,7 +31,6 @@ void Widget::getDataPath()
     // TODO: make exception if no path selected
     cout << path.toStdString() << endl;
     m_pp.savePath(path.toStdString());
-    cout << "Path: " << m_pp.getPath() << endl;
     m_pp.startProcessing();
 }
 
@@ -46,16 +42,19 @@ void Widget::sharpen()
 void Widget::setSharpGauss(int inInt)
 {
     m_pp.m_sharp_gauss = inInt;
+    sharpen();
 }
 
 void Widget::setSharpWeightBlurr(double weightBlurr)
 {
     m_pp.m_sharp_weightBlurr = weightBlurr;
+    sharpen();
 }
 
 void Widget::setSharpWeightOrg(double weightOrg)
 {
     m_pp.m_sharp_weightOrg = weightOrg;
+    sharpen();
 }
 
 bool Widget::dataReady()

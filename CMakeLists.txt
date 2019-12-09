@@ -10,7 +10,7 @@ find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Test Concurrent OpenGL)
 find_package(OpenCV REQUIRED)
 find_package(Threads)
 
-set(OpenCV_DIR "C:/Users/basil/lib/opencv-build")
+#set(OpenCV_DIR "C:/Users/basil/lib/opencv-build")
 find_package(OpenCV REQUIRED COMPONENTS core imgproc highgui)
 include_directories(${OpenCV_INCLUDE_DIRS})
 

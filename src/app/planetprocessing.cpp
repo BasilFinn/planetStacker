@@ -185,6 +185,8 @@ bool PlanetProcessing::loadRaw(void)
 
 void PlanetProcessing::savePath(string path)
 {
+    if(m_t_proc.joinable())
+        m_t_proc.join();
     cout << "Processing: save path" << endl;
     m_dataPath = path;
 }

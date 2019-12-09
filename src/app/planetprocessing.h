@@ -30,7 +30,7 @@ public:
     //std::unique_ptr<std::thread> m_t_proc;
     std::thread m_t_proc;
 
-    string getPath(){return m_dataPath;}
+    //string getPath(){return m_dataPath;}
     DataQueue<cv::Mat> m_data_raw;
     vector<cv::Mat> m_data_crop;
     int m_rangeRows, m_rangeCols;
