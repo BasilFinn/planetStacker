@@ -18,7 +18,7 @@ class PlanetProcessing
 public:
     PlanetProcessing(Iprocessing* host);
     ~PlanetProcessing();
-    bool executeProcessing();
+    void executeProcessing();
     bool startProcessing();
     cv::Mat processThread();
     bool loadRaw(void);
@@ -27,7 +27,8 @@ public:
     void stackFrames();
     void sharpenFrame();
 
-    std::shared_ptr<std::thread> m_t_proc;
+    //std::unique_ptr<std::thread> m_t_proc;
+    std::thread m_t_proc;
 
     string getPath(){return m_dataPath;}
     DataQueue<cv::Mat> m_data_raw;
@@ -38,6 +39,9 @@ public:
     int m_frameCnt;
     int m_width = 400;  // Cols
     int m_height = 200; // rows
+    int m_sharp_gauss=3;
+    double m_sharp_weightOrg=1.5;
+    double m_sharp_weightBlurr=-0.5;
     cv::Mat m_outMat;
     Iprocessing* m_host;
 

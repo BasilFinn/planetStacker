@@ -15,7 +15,12 @@ Widget::Widget(QWidget *parent) :
 {
     ui->setupUi(this);
     connect(ui->pushButton_loadData, SIGNAL (clicked()),this, SLOT(getDataPath()));
+    // Sharpening
     connect(ui->pushButton_sharpen, SIGNAL (clicked()), this, SLOT(sharpen()));
+    connect(ui->spinBox_gauss, SIGNAL(valueChanged(int)), this, SLOT(setSharpGauss(int)));
+    connect(ui->doubleSpinBox_weightBlurr,SIGNAL(valueChanged(double)), this, SLOT(setSharpGauss(double)));
+    connect(ui->doubleSpinBox_weightOrg,SIGNAL(valueChanged(double)), this, SLOT(setSharpGauss(double)));
+
 }
 
 Widget::~Widget()
@@ -25,7 +30,6 @@ Widget::~Widget()
 
 void Widget::getDataPath()
 {
-//    if m_pp.m_t_proc.
     QString path = QFileDialog::getOpenFileName(this, tr("Select video"),tr("."),tr("Movie Files (*.mp4 *.avi)"));
     // TODO: make exception if no path selected
     cout << path.toStdString() << endl;
@@ -37,6 +41,21 @@ void Widget::getDataPath()
 void Widget::sharpen()
 {
     m_pp.sharpenFrame();
+}
+
+void Widget::setSharpGauss(int inInt)
+{
+    m_pp.m_sharp_gauss = inInt;
+}
+
+void Widget::setSharpWeightBlurr(double weightBlurr)
+{
+    m_pp.m_sharp_weightBlurr = weightBlurr;
+}
+
+void Widget::setSharpWeightOrg(double weightOrg)
+{
+    m_pp.m_sharp_weightOrg = weightOrg;
 }
 
 bool Widget::dataReady()

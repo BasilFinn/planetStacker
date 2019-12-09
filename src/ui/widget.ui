@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>786</width>
+    <width>878</width>
     <height>572</height>
    </rect>
   </property>
@@ -16,9 +16,9 @@
   <widget class="QLabel" name="label_image">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>20</y>
-     <width>651</width>
+     <x>10</x>
+     <y>10</y>
+     <width>671</width>
      <height>501</height>
     </rect>
    </property>
@@ -37,7 +37,7 @@
     <rect>
      <x>20</x>
      <y>530</y>
-     <width>761</width>
+     <width>841</width>
      <height>36</height>
     </rect>
    </property>
@@ -58,18 +58,84 @@
     </item>
    </layout>
   </widget>
-  <widget class="QPushButton" name="pushButton_sharpen">
+  <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>700</x>
-     <y>490</y>
-     <width>81</width>
-     <height>34</height>
+     <x>740</x>
+     <y>40</y>
+     <width>127</width>
+     <height>156</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Sharpen</string>
-   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QPushButton" name="pushButton_sharpen">
+      <property name="text">
+       <string>Sharpen</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Filter Size</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="spinBox_gauss">
+        <property name="minimum">
+         <number>1</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Orginal</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDoubleSpinBox" name="doubleSpinBox_weightOrg">
+        <property name="prefix">
+         <string/>
+        </property>
+        <property name="minimum">
+         <double>0.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>3.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Blurr</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDoubleSpinBox" name="doubleSpinBox_weightBlurr">
+        <property name="value">
+         <double>0.500000000000000</double>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

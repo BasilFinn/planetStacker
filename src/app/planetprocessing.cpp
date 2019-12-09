@@ -7,16 +7,21 @@ PlanetProcessing::PlanetProcessing(Iprocessing* host): m_host(host)
 
 PlanetProcessing::~PlanetProcessing()
 {
-    m_t_proc->join();;
+//    m_t_proc->join();;
+    if(m_t_proc.joinable())
+        m_t_proc.join();
 }
 
 
 bool PlanetProcessing::startProcessing(){
-    m_t_proc = make_shared<std::thread>([this]{executeProcessing();});
+
+    //m_t_proc = make_unique<std::thread>([this]{executeProcessing();});
+//    m_t_proc(this->executeProcessing());
+    m_t_proc = std::thread(&PlanetProcessing::executeProcessing,this);
     return true;
 }
 
-bool PlanetProcessing::executeProcessing()
+void PlanetProcessing::executeProcessing()
 {
     //make ref frame
     makeRefFrame();
@@ -98,7 +103,7 @@ bool PlanetProcessing::executeProcessing()
 //    imshow("Last frame", m_data_crop.back());
 
     stackFrames();
-    return 1;
+    //return 1;
 }
 
 
@@ -237,9 +242,8 @@ void PlanetProcessing::stackFrames()
 void PlanetProcessing::sharpenFrame()
 {
     cv::Mat imgSharp;
-    cv::GaussianBlur(m_stackedFrame, imgSharp, cv::Size(0, 0), 9);      // 3
-    cv::addWeighted(m_stackedFrame, 3, imgSharp, -2, 0, imgSharp);  // 1.5 -0.5 0
-
+    cv::GaussianBlur(m_stackedFrame, imgSharp, cv::Size(0, 0), m_sharp_gauss);      // 9
+    cv::addWeighted(m_stackedFrame, m_sharp_weightOrg, imgSharp, -m_sharp_weightBlurr, 0, imgSharp);  // 1.5 -0.5 0
 
     //cv::imshow("sharp img", imgSharp/255);
 

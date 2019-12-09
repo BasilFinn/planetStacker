@@ -24,6 +24,9 @@ public:
 public slots:
     void getDataPath();
     void sharpen();
+    void setSharpGauss(int inInt);
+    void setSharpWeightOrg(double weightOrg);
+    void setSharpWeightBlurr(double weightBlurr);
 
 private:
     Ui::Widget *ui;
