@@ -26,7 +26,7 @@ bool PlanetProcessing::executeProcessing()
     cv::Mat tmpMat;
     std::future_status status;
     bool running = true;
-    int frameCnt =0, rcnt=0;
+    int rcnt=0;
     //TODO: set max frames or implement this in reader (while t_loadRaw running)
     m_frameCnt = 0;
 
