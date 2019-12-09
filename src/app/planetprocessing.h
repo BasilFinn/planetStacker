@@ -6,7 +6,7 @@
 #include <thread>
 #include <future>
 #include <chrono>
-#include <tuple>
+#include <utility> //make_pair
 #include "dataqueue.h"
 #include "iprocessing.h"
 
@@ -20,18 +20,21 @@ public:
     ~PlanetProcessing();
     void executeProcessing();
     bool startProcessing();
-    cv::Mat processThread();
+    pair<double, cv::Mat> processThread();
     bool loadRaw(void);
     void savePath(string path);
-    void makeRefFrame();
-    void stackFrames();
-    void sharpenFrame();
+    bool makeRefFrame();
+    bool stackFrames();
+    bool sharpenFrame();
+    double getContrast(cv::Mat img);
 
     DataQueue<cv::Mat> m_data_raw;
-    vector<cv::Mat> m_data_crop;
+    vector<pair<double, cv::Mat>> m_data_crop;
     cv::Mat m_outMat;
+    cv::Mat m_stackedFrame;
     Iprocessing* m_host;
     std::thread m_t_proc;
+    bool m_processingDone;
 
     int m_rangeRows, m_rangeCols;
     int m_nThreads = 6;
@@ -42,6 +45,7 @@ public:
     int m_sharp_gauss=3;
     double m_sharp_weightOrg=1.5;
     double m_sharp_weightBlurr=-0.5;
+    double m_stackCorrThres = 1;
 
     // load ref image in middle (to show fov
     // process async (load img, find max, crop region, register to refFrame, pushback to vector)
@@ -49,7 +53,6 @@ public:
 private:
     string m_dataPath;
     cv::Mat m_refFrame;
-    cv::Mat m_stackedFrame;
 };
 
 #endif // PLANETPROCESSING_H

@@ -58,7 +58,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>730</x>
@@ -145,6 +145,54 @@
      </layout>
     </item>
    </layout>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>730</x>
+     <y>190</y>
+     <width>71</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Stack Thres</string>
+   </property>
+  </widget>
+  <widget class="QDoubleSpinBox" name="doubleSpinBox_stackThres">
+   <property name="geometry">
+    <rect>
+     <x>800</x>
+     <y>190</y>
+     <width>71</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="decimals">
+    <number>3</number>
+   </property>
+   <property name="maximum">
+    <double>1.000000000000000</double>
+   </property>
+   <property name="singleStep">
+    <double>0.001000000000000</double>
+   </property>
+   <property name="value">
+    <double>1.000000000000000</double>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_resetView">
+   <property name="geometry">
+    <rect>
+     <x>770</x>
+     <y>460</y>
+     <width>88</width>
+     <height>34</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Reset view</string>
+   </property>
   </widget>
  </widget>
  <resources/>

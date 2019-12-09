@@ -26,6 +26,8 @@ public slots:
     void setSharpGauss(int inInt);
     void setSharpWeightOrg(double weightOrg);
     void setSharpWeightBlurr(double weightBlurr);
+    void updateStackThres(double newThres);
+    void resetView();
 
 private:
     Ui::Widget *ui;

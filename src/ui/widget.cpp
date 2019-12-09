@@ -17,7 +17,9 @@ Widget::Widget(QWidget *parent) :
     connect(ui->spinBox_gauss, SIGNAL(valueChanged(int)), this, SLOT(setSharpGauss(int)));
     connect(ui->doubleSpinBox_weightBlurr,SIGNAL(valueChanged(double)), this, SLOT(setSharpWeightBlurr(double)));
     connect(ui->doubleSpinBox_weightOrg,SIGNAL(valueChanged(double)), this, SLOT(setSharpWeightOrg(double)));
-
+    // Stacking
+    connect(ui->doubleSpinBox_stackThres,SIGNAL(valueChanged(double)), this, SLOT(updateStackThres(double)));
+    connect(ui->pushButton_resetView,SIGNAL(clicked()),this, SLOT(resetView()));
 }
 
 Widget::~Widget()
@@ -51,15 +53,27 @@ void Widget::setSharpWeightBlurr(double weightBlurr)
     sharpen();
 }
 
+void Widget::updateStackThres(double newThres)
+{
+    m_pp.m_stackCorrThres = newThres;
+    m_pp.stackFrames();
+}
+
+void Widget::resetView()
+{
+    m_pp.m_outMat = m_pp.m_stackedFrame.clone();
+    dataReady();
+}
+
 void Widget::setSharpWeightOrg(double weightOrg)
 {
     m_pp.m_sharp_weightOrg = weightOrg;
     sharpen();
 }
 
+// Callbacks
 bool Widget::dataReady()
 {
-    // Implement here (call in planetprocessing)
     cv::Mat img = m_pp.m_outMat.clone();
     img.convertTo(img, CV_8UC3);
     ui->label_image->setPixmap(QPixmap::fromImage(QImage(img.data, img.cols, img.rows, img.step, QImage::Format_RGB888).rgbSwapped()));
