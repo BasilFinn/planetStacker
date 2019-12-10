@@ -2,7 +2,7 @@
 
 PlanetProcessing::PlanetProcessing(Iprocessing* host): m_host(host)
 {
-    //host->dataReady();
+    m_nThreads = std::thread::hardware_concurrency()-2;     // Set maximum available threads for processing as max-2
 }
 
 PlanetProcessing::~PlanetProcessing()
