@@ -6,7 +6,7 @@
 #include <thread>
 #include <future>
 #include <chrono>
-#include <utility> //make_pair
+#include <utility>
 #include "dataqueue.h"
 #include "iprocessing.h"
 
@@ -18,41 +18,40 @@ class PlanetProcessing
 public:
     PlanetProcessing(Iprocessing* host);
     ~PlanetProcessing();
-    void executeProcessing();
     bool startProcessing();
-    pair<double, cv::Mat> processThread();
-    bool loadRaw(void);
     void savePath(string path);
-    bool makeRefFrame();
-    bool stackFrames();
     bool sharpenFrame();
-    double getContrast(cv::Mat img);
+    bool stackFrames();
+    pair<double, cv::Mat> processThread();
 
-    DataQueue<cv::Mat> m_data_raw;
-    vector<pair<double, cv::Mat>> m_data_crop;
     cv::Mat m_outMat;
     cv::Mat m_stackedFrame;
     Iprocessing* m_host;
     std::thread m_t_proc;
-    bool m_processingDone;
+    string m_dataPath;
 
+    bool m_processingDone;
     int m_rangeRows, m_rangeCols;
-    int m_nThreads = 6;
+    int m_nThreads;
     int m_noFrames;
     int m_frameCnt;
-    int m_width = 400;  // Cols
-    int m_height = 200; // rows
+    int m_width;  // Cols
+    int m_height; // rows
     int m_sharp_gauss=3;
     double m_sharp_weightOrg=1.5;
     double m_sharp_weightBlurr=-0.5;
     double m_stackCorrThres = 1;
 
-    // load ref image in middle (to show fov
-    // process async (load img, find max, crop region, register to refFrame, pushback to vector)
-
 private:
-    string m_dataPath;
+    void executeProcessing();
+    double getContrast(cv::Mat img);
+    bool makeRefFrame();
+    bool loadRaw(void);
+
     cv::Mat m_refFrame;
+    DataQueue<cv::Mat> m_data_raw;
+    vector<pair<double, cv::Mat>> m_data_crop;
+
 };
 
 #endif // PLANETPROCESSING_H

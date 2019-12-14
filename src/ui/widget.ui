@@ -52,7 +52,7 @@
     <item>
      <widget class="QPushButton" name="pushButton_loadData">
       <property name="text">
-       <string>Load data</string>
+       <string>Process data</string>
       </property>
      </widget>
     </item>
@@ -185,13 +185,26 @@
    <property name="geometry">
     <rect>
      <x>770</x>
-     <y>460</y>
+     <y>240</y>
      <width>88</width>
      <height>34</height>
     </rect>
    </property>
    <property name="text">
     <string>Reset view</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_saveImage">
+   <property name="geometry">
+    <rect>
+     <x>770</x>
+     <y>490</y>
+     <width>88</width>
+     <height>34</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Save Image</string>
    </property>
   </widget>
  </widget>

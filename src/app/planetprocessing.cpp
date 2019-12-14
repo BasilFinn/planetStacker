@@ -1,6 +1,7 @@
 #include "planetprocessing.h"
 
-PlanetProcessing::PlanetProcessing(Iprocessing* host): m_host(host)
+PlanetProcessing::PlanetProcessing(Iprocessing* host)
+    : m_host(host), m_width(400), m_height(200)
 {
     m_nThreads = std::thread::hardware_concurrency()-2;     // Set maximum available threads for processing as max-2
 }
@@ -22,7 +23,6 @@ bool PlanetProcessing::startProcessing(){
 void PlanetProcessing::executeProcessing()
 {
     m_processingDone = false;
-    //make ref frame
     makeRefFrame();
 
     // Check and update asyncs
@@ -60,7 +60,7 @@ void PlanetProcessing::executeProcessing()
                     if(m_frameCnt<m_noFrames)
                     {
                         m_frameCnt++;
-                        m_host->updateBar();
+                        m_host->updateBar(m_frameCnt);
                         asyncProcess[i] = std::async(std::launch::async, [this](){return processThread();});
                     }
                     break;
@@ -97,6 +97,10 @@ void PlanetProcessing::executeProcessing()
     }
     m_processingDone = true;
     cout << "No. loaded frames: " << m_data_crop.size() <<  endl;
+
+    // Sort data_crop by correlation
+    std::sort(m_data_crop.begin(), m_data_crop.end(),
+              [&](pair<double, cv::Mat> &x, pair<double, cv::Mat> &y){return x.first>y.first;});
 
     stackFrames();
 //    return 1;
@@ -135,8 +139,8 @@ pair<double, cv::Mat> PlanetProcessing::processThread()
     //REGISTER FRAME
     const int warpMode = MOTION_TRANSLATION;
     Mat warpMat = Mat::eye(2,3,CV_32F);
-    int nIterations = 8000;
-    double termination_eps = 1e-10; //1e-10;
+    int nIterations = 4000;
+    double termination_eps = 1e-3; //1e-10;
     TermCriteria criteria (TermCriteria::COUNT+TermCriteria::EPS, nIterations, termination_eps);
 
     warpMat = Mat::eye(2,3,CV_32F);
@@ -184,7 +188,6 @@ void PlanetProcessing::savePath(string path)
 {
     if(m_t_proc.joinable())
         m_t_proc.join();
-    cout << "Processing: save path" << endl;
     m_dataPath = path;
 }
 
@@ -233,21 +236,23 @@ bool PlanetProcessing::stackFrames()
 {
     if(m_processingDone == false)
         return false;
-
-    cout << "enter stacking\n";
-
     int factor = 2;
     int stackFrameCount=0;
-    Mat matSum = Mat::zeros(cv::Size(m_data_crop[0].second.cols*factor, m_data_crop[0].second.rows*factor), 22);// m_data_crop[0].type());
+    Mat matSum = Mat::zeros(cv::Size(m_data_crop[0].second.cols*factor, m_data_crop[0].second.rows*factor), 22);
     for(size_t i=0;i<m_data_crop.size(); i++)
     {
-//        cout << m_data_crop[i].first << endl;
+        cout << i << endl;
         if(m_data_crop[i].first>=m_stackCorrThres)
         {
+            cout << "Correlation: " << i << m_data_crop[i].first << endl;
             stackFrameCount++;
             cv::Mat rsMat = m_data_crop[i].second.clone();
             cv::resize(rsMat, rsMat, cv::Size(rsMat.cols*factor, rsMat.rows*factor));
             cv::accumulate(rsMat, matSum);
+        }
+        else{
+            cout << "Break" << endl;
+            break;
         }
     }
 
@@ -256,7 +261,6 @@ bool PlanetProcessing::stackFrames()
 
     m_outMat = m_stackedFrame.clone();
     m_host->dataReady();
-    cout << "leave stacking\n";
     return true;
 }
 
@@ -265,8 +269,8 @@ bool PlanetProcessing::sharpenFrame()
     if(m_processingDone == false)
         return false;
     cv::Mat imgSharp;
-    cv::GaussianBlur(m_stackedFrame, imgSharp, cv::Size(0, 0), m_sharp_gauss);      // 9
-    cv::addWeighted(m_stackedFrame, m_sharp_weightOrg, imgSharp, -m_sharp_weightBlurr, 0, imgSharp);  // 1.5 -0.5 0
+    cv::GaussianBlur(m_stackedFrame, imgSharp, cv::Size(0, 0), m_sharp_gauss);
+    cv::addWeighted(m_stackedFrame, m_sharp_weightOrg, imgSharp, -m_sharp_weightBlurr, 0, imgSharp);
 
     //cv::imshow("sharp img", imgSharp/255);
 
@@ -277,6 +281,7 @@ bool PlanetProcessing::sharpenFrame()
 
 double PlanetProcessing::getContrast(cv::Mat img)
 {
+    // Used for reference frame generation
     Mat dx, dy;
     Sobel( img, dx, CV_32F, 1, 0, 3 );
     Sobel( img, dy, CV_32F, 0, 1, 3 );

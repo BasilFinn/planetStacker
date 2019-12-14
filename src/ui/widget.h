@@ -17,17 +17,17 @@ public:
     explicit Widget(QWidget *parent = nullptr);
     ~Widget() override;
     bool dataReady() override;
-    void updateBar() override;
+    void updateBar(int currentFrame) override;
     void initBar(int maxFrames) override;
 
 public slots:
     void getDataPath();
-    void sharpen();
     void setSharpGauss(int inInt);
     void setSharpWeightOrg(double weightOrg);
     void setSharpWeightBlurr(double weightBlurr);
     void updateStackThres(double newThres);
     void resetView();
+    void saveImage();
 
 private:
     Ui::Widget *ui;

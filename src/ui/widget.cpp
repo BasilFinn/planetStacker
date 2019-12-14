@@ -20,6 +20,8 @@ Widget::Widget(QWidget *parent) :
     // Stacking
     connect(ui->doubleSpinBox_stackThres,SIGNAL(valueChanged(double)), this, SLOT(updateStackThres(double)));
     connect(ui->pushButton_resetView,SIGNAL(clicked()),this, SLOT(resetView()));
+    // Saving
+    connect(ui->pushButton_saveImage,SIGNAL(clicked()),this, SLOT(saveImage()));
 }
 
 Widget::~Widget()
@@ -36,21 +38,16 @@ void Widget::getDataPath()
     m_pp.startProcessing();
 }
 
-void Widget::sharpen()
-{
-    m_pp.sharpenFrame();
-}
-
 void Widget::setSharpGauss(int inInt)
 {
     m_pp.m_sharp_gauss = inInt;
-    sharpen();
+    m_pp.sharpenFrame();
 }
 
 void Widget::setSharpWeightBlurr(double weightBlurr)
 {
     m_pp.m_sharp_weightBlurr = weightBlurr;
-    sharpen();
+    m_pp.sharpenFrame();
 }
 
 void Widget::updateStackThres(double newThres)
@@ -65,10 +62,25 @@ void Widget::resetView()
     dataReady();
 }
 
+void Widget::saveImage()
+{
+    std::string path = m_pp.m_dataPath;
+    size_t found;
+    found=path.find_last_of("/\\");
+    std::string name =  path.substr(found+1);
+    path = path.substr(0,found+1);
+    found = name.find_last_of(".");
+    name = name.substr(0,found);
+
+    cout << "savepath: " << path + name + ".png" << endl;
+
+    cv::imwrite(path + name + ".png", m_pp.m_outMat);
+}
+
 void Widget::setSharpWeightOrg(double weightOrg)
 {
     m_pp.m_sharp_weightOrg = weightOrg;
-    sharpen();
+    m_pp.sharpenFrame();
 }
 
 // Callbacks
@@ -80,9 +92,9 @@ bool Widget::dataReady()
     return true;
 }
 
-void Widget::updateBar()
+void Widget::updateBar(int currentFrame)
 {
-    ui->progressBar->setValue(m_pp.m_frameCnt);
+    ui->progressBar->setValue(currentFrame);
 }
 
 void Widget::initBar(int maxFrames)

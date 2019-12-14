@@ -6,7 +6,7 @@ class Iprocessing
 public:
     virtual bool dataReady() = 0;
 
-    virtual void updateBar() = 0;
+    virtual void updateBar(int currentFrame) = 0;
     virtual void initBar(int maxFrames) = 0;
 };
 
