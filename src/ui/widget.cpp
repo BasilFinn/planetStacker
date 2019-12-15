@@ -23,7 +23,7 @@ Widget::Widget(QWidget *parent) :
     // Saving
     connect(ui->pushButton_saveImage,SIGNAL(clicked()),this, SLOT(saveImage()));
     // Scaling
-    connect(ui->spinBox_scaleFactor, SIGNAL(valueChanged(int)), this, SLOT(scaleImage(int)));
+    connect(ui->spinBox_scaleFactor, SIGNAL(valueChanged(double)), this, SLOT(scaleImage(double)));
 }
 
 Widget::~Widget()
@@ -79,7 +79,7 @@ void Widget::saveImage()
     cv::imwrite(path + name + ".png", m_pp.m_outMat);
 }
 
-void Widget::scaleImage(int scaleFactor)
+void Widget::scaleImage(double scaleFactor)
 {
     m_pp.m_scaleFactor = scaleFactor;
     m_pp.stackFrames();

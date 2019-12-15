@@ -235,7 +235,7 @@ bool PlanetProcessing::stackFrames()
 {
     if(m_processingDone == false)
         return false;
-    int factor = m_scaleFactor;
+    double factor = m_scaleFactor;
     int stackFrameCount=0;
     Mat matSum = Mat::zeros(cv::Size(m_data_crop[0].second.cols*factor, m_data_crop[0].second.rows*factor), 22);
     for(size_t i=0;i<m_data_crop.size(); i++)
