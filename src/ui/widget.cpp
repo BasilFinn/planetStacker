@@ -22,6 +22,8 @@ Widget::Widget(QWidget *parent) :
     connect(ui->pushButton_resetView,SIGNAL(clicked()),this, SLOT(resetView()));
     // Saving
     connect(ui->pushButton_saveImage,SIGNAL(clicked()),this, SLOT(saveImage()));
+    // Scaling
+    connect(ui->spinBox_scaleFactor, SIGNAL(valueChanged(int)), this, SLOT(scaleImage(int)));
 }
 
 Widget::~Widget()
@@ -75,6 +77,12 @@ void Widget::saveImage()
     cout << "savepath: " << path + name + ".png" << endl;
 
     cv::imwrite(path + name + ".png", m_pp.m_outMat);
+}
+
+void Widget::scaleImage(int scaleFactor)
+{
+    m_pp.m_scaleFactor = scaleFactor;
+    m_pp.stackFrames();
 }
 
 void Widget::setSharpWeightOrg(double weightOrg)

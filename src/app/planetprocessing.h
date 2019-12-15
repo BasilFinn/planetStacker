@@ -31,6 +31,7 @@ public:
     string m_dataPath;
 
     bool m_processingDone;
+    int m_scaleFactor;
     int m_rangeRows, m_rangeCols;
     int m_nThreads;
     int m_noFrames;

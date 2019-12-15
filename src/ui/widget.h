@@ -28,6 +28,7 @@ public slots:
     void updateStackThres(double newThres);
     void resetView();
     void saveImage();
+    void scaleImage(int scaleFactor);
 
 private:
     Ui::Widget *ui;

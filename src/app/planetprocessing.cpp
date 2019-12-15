@@ -1,14 +1,13 @@
 #include "planetprocessing.h"
 
 PlanetProcessing::PlanetProcessing(Iprocessing* host)
-    : m_host(host), m_width(400), m_height(200)
+    : m_host(host), m_width(300), m_height(200), m_scaleFactor(1)
 {
     m_nThreads = std::thread::hardware_concurrency()-2;     // Set maximum available threads for processing as max-2
 }
 
 PlanetProcessing::~PlanetProcessing()
 {
-    //    m_t_proc->join();;
     if(m_t_proc.joinable())
         m_t_proc.join();
 }
@@ -236,7 +235,7 @@ bool PlanetProcessing::stackFrames()
 {
     if(m_processingDone == false)
         return false;
-    int factor = 2;
+    int factor = m_scaleFactor;
     int stackFrameCount=0;
     Mat matSum = Mat::zeros(cv::Size(m_data_crop[0].second.cols*factor, m_data_crop[0].second.rows*factor), 22);
     for(size_t i=0;i<m_data_crop.size(); i++)
