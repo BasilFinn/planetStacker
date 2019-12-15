@@ -1,7 +1,8 @@
 #include "planetprocessing.h"
 
 PlanetProcessing::PlanetProcessing(Iprocessing* host)
-    : m_host(host), m_width(300), m_height(200), m_scaleFactor(1)
+    : m_host(host), m_width(300), m_height(200), m_scaleFactor(1),
+      m_sharp_gauss(3), m_sharp_weightOrg(3), m_sharp_weightBlurr(1.5), m_stackCorrThres(1)
 {
     m_nThreads = std::thread::hardware_concurrency()-2;     // Set maximum available threads for processing as max-2
 }
@@ -240,17 +241,14 @@ bool PlanetProcessing::stackFrames()
     Mat matSum = Mat::zeros(cv::Size(m_data_crop[0].second.cols*factor, m_data_crop[0].second.rows*factor), 22);
     for(size_t i=0;i<m_data_crop.size(); i++)
     {
-        cout << i << endl;
         if(m_data_crop[i].first>=m_stackCorrThres)
         {
-            cout << "Correlation: " << i << m_data_crop[i].first << endl;
             stackFrameCount++;
             cv::Mat rsMat = m_data_crop[i].second.clone();
             cv::resize(rsMat, rsMat, cv::Size(rsMat.cols*factor, rsMat.rows*factor));
             cv::accumulate(rsMat, matSum);
         }
         else{
-            cout << "Break" << endl;
             break;
         }
     }

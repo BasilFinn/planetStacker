@@ -31,17 +31,17 @@ public:
     string m_dataPath;
 
     bool m_processingDone;
-    double m_scaleFactor;
     int m_rangeRows, m_rangeCols;
     int m_nThreads;
     int m_noFrames;
     int m_frameCnt;
-    int m_width;  // Cols
-    int m_height; // rows
-    int m_sharp_gauss=3;
-    double m_sharp_weightOrg=1.5;
-    double m_sharp_weightBlurr=-0.5;
-    double m_stackCorrThres = 1;
+    int m_width;
+    int m_height;
+    double m_scaleFactor;
+    int m_sharp_gauss;
+    double m_sharp_weightOrg;
+    double m_sharp_weightBlurr;
+    double m_stackCorrThres ;
 
 private:
     void executeProcessing();
