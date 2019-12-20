@@ -3,6 +3,8 @@ The PlanetStacker software reads videos of planets passing a CCD sensor connecte
 and stacked which results into a better signal to noise ration. After the stacking a simple sharpening filter is applied
 to the image.
 
+Available on the Github [repository](https://github.com/BasilFinn/planetStacker)
+
 # Results
 <img src="https://github.com/BasilFinn/planetStacker/blob/master/img/saturn_before.png" width="400" height="300">
 Raw image
@@ -25,3 +27,4 @@ stacked and sharpend
 > CMake 3.16.0
 > OpenCV 4.1.2
 > Linux 64bit
+
